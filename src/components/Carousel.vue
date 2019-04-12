@@ -416,14 +416,19 @@ export default {
           slideLeft + 5 - calc.wrapperViewportOffsetLeft < 6) {
             slide.classList.add('in-view')
             slide.classList.remove('part-in-view')
+
+            if (this.dots && this.images && this.images.length > 0) {
+              slideDot.classList.add('in-view')
+              slideDot.classList.remove('part-in-view')
+            }
           } else {
             slide.classList.add('part-in-view')
             slide.classList.remove('in-view')
-          }
 
-          if (this.dots && this.images && this.images.length > 0) {
-            slideDot.classList.add('part-in-view')
-            slideDot.classList.remove('in-view')
+            if (this.dots && this.images && this.images.length > 0) {
+              slideDot.classList.add('part-in-view')
+              slideDot.classList.remove('in-view')
+            }
           }
         } else {
           slide.classList.remove('in-view', 'part-in-view')
