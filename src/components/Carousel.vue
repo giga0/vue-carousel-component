@@ -226,7 +226,7 @@ export default {
         this.goTo(val)
       } else {
         val = parseInt(val)
-        if (Number.isInteger(val) && val <= this.images.length) {
+        if (Number.isInteger(val) && val > 0 && val <= this.images.length) {
           this.goTo(val - 1)
         } else false
       }
@@ -272,6 +272,12 @@ export default {
     },
     // core slider move method
     goTo (event) {
+      const currentSlide = document.getElementsByClassName('carousel-slide in-view')[0]
+      const currentSlideId = parseInt(currentSlide.id.split('_').pop())
+      if (event === currentSlideId) {
+        return
+      }
+
       if (!this.sliding) {
         this.sliding = true
         this.$emit('beforeSlideMove')
@@ -280,7 +286,7 @@ export default {
         if (event === 'left') {
           // case for left arrow & left keyCode
           // when going on left we are interested in width od first slide 'in-view'
-          const currentSlideWidth = Math.round(document.getElementsByClassName('carousel-slide in-view')[0].offsetWidth)
+          const currentSlideWidth = Math.round(currentSlide.offsetWidth)
           const leftArrow = document.getElementsByClassName('carousel-arrow--left')[0]
           // on left keyCode short time left arrow display for better UX
           if (window.getComputedStyle(leftArrow).visibility === 'hidden') {
