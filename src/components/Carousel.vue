@@ -272,10 +272,14 @@ export default {
     },
     // core slider move method
     goTo (event) {
-      const currentSlide = document.getElementsByClassName('carousel-slide in-view')[0]
-      const currentSlideId = parseInt(currentSlide.id.split('_').pop())
-      if (event === currentSlideId) {
-        return
+      // current slides in view
+      const slidesInView = document.getElementsByClassName('carousel-slide in-view')
+      for (let i = 0; i < slidesInView.length; i++) {
+        // check if any of their id's are equal to event
+        // if it is -> escape from method
+        if (event === parseInt(slidesInView[i].id.split('_').pop())) {
+          return
+        }
       }
 
       if (!this.sliding) {
@@ -286,7 +290,7 @@ export default {
         if (event === 'left') {
           // case for left arrow & left keyCode
           // when going on left we are interested in width od first slide 'in-view'
-          const currentSlideWidth = Math.round(currentSlide.offsetWidth)
+          const currentSlideWidth = Math.round(document.getElementsByClassName('carousel-slide in-view')[0].offsetWidth)
           const leftArrow = document.getElementsByClassName('carousel-arrow--left')[0]
           // on left keyCode short time left arrow display for better UX
           if (window.getComputedStyle(leftArrow).visibility === 'hidden') {
