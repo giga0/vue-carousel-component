@@ -1,5 +1,9 @@
 # vue-carousel-component
 
+### Demo
+###### CodeSandbox: https://codesandbox.io/s/github/giga0/vue-carousel-component
+###### Full screen: https://v1yvx85ly7.codesandbox.io/
+
 ### Project setup
 ```
 yarn install
