@@ -17,7 +17,8 @@ Carousel is made with the idea to handle images as slides with fixed height and 
 On image click, component emit event imgClicked to a parent alongside with image object as a second parameter. It's also possible to listen beforeSlideMove and afterSlideMove events.
 
 There is several props (none of them are required) that can be passed to Carousel component defining it appearance and functionality:
-| Prop | Type | Default value | Additional info
+
+| Prop | Type | Default value | Additional info |
 | ------ | ------ | ------ | ------ |
 | images | Array | none | in case there is no slides (images), note will appear |
 | goToSlide | String, Number | none | it's possible to move slides from parent, passing the value (left, right or number of slide) through this prop |
