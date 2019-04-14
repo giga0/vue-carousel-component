@@ -14,7 +14,7 @@
       </carousel>
     </div>
     <p><strong>Slide move event:</strong> {{ slideMoveEvent }}</p>
-    <label for="input"><strong>Go to slide (left, right or number of slide): </strong></label>
+    <label for="input"><strong>Go to slide (from parent component, type: left, right or number of slide): </strong></label>
     <input id="input" type="text" v-model="input" />
     <ul v-if="img">
       <strong>Image clicked</strong>

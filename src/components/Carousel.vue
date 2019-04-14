@@ -482,7 +482,7 @@ export default {
     position: relative;
     display: flex;
     height: 100%;
-    transition: all .2s ease;
+    transition: all .25s ease;
   }
 
   &-slide {
@@ -490,7 +490,7 @@ export default {
     height: 100%;
     opacity: .5;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.05);
-    transition: all .2s ease;
+    transition: all .25s ease;
 
     &.in-view {
       opacity: 1;
@@ -520,7 +520,7 @@ export default {
     display: flex;
     visibility: hidden;
     opacity: 0;
-    transition: all .2s ease;
+    transition: all .25s ease;
 
     @media screen and (max-width: 767px) {
       visibility: visible;
@@ -535,7 +535,7 @@ export default {
     svg {
       opacity: 1;
       border-radius: 50%;
-      transition: all .2s ease;
+      transition: all .25s ease;
       cursor: pointer;
     }
   }
@@ -546,7 +546,7 @@ export default {
     .dot {
       background-color: #e5e5e5;
       border-radius: 50%;
-      transition: all .2s ease;
+      transition: all .25s ease;
       cursor: pointer;
 
       &.in-view {
