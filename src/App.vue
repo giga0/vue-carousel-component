@@ -37,11 +37,11 @@ export default {
       img: null,
       slideMoveEvent: 'nothing for now...',
       images: [
-        { src: 'https://media.treehugger.com/assets/images/2018/07/nature-benefits.jpg.860x0_q70_crop-scale.jpg', alt: 'nature-1'},
-        { src: 'https://www.slovenia.info/imagine_cache/og/uploads/narava/nature_slovenia_s.jpg', alt: 'nature-2'},
-        { src: 'https://croatia.hr/sites/default/files/styles/image_full_width/public/2017-08/02_01_slide_nature.jpg?itok=ItAHmLlp', alt: 'nature-3'},
-        { src: 'https://www.visitsingapore.com/content/dam/desktop/global/see-do-singapore/nature-wildlife/naturewildlife-1000x1000.jpg', alt: 'nature-4'},
-        { src: 'https://www.tourisme-lorraine.fr/wp-content/uploads/2016/02/88-tendon-cascade-de-tendon-gilles-pecqueur-600x600.jpg', alt: 'nature-5'}
+        { src: require('@/assets/nature-benefits.jpg.860x0_q70_crop-scale.jpg'), alt: 'nature-1'},
+        { src: require('@/assets/nature_slovenia_s.jpg'), alt: 'nature-2'},
+        { src: require('@/assets/02_01_slide_nature.jpg'), alt: 'nature-3'},
+        { src: require('@/assets/naturewildlife-1000x1000.jpg'), alt: 'nature-4'},
+        { src: require('@/assets/88-tendon-cascade-de-tendon-gilles-pecqueur-600x600.jpg'), alt: 'nature-5'}
       ],
       arrow: Arrow,
       arrowsRotation: { leftArrow: '360deg', rightArrow: '180deg' }
