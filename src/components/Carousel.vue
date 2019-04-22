@@ -1,17 +1,20 @@
 <template>
   <div class="carousel">
     <!-- Carousel wrapper -->
-    <div :style="{ height: imgHeight }"
+    <div ref="wrapper"
+      :style="{ height: imgHeight }"
       class="carousel-wrapper"
       @mouseenter="mouseEnterWrapper"
       @mouseleave="mouseLeaveWrapper">
       <!-- Carousel track -->
       <div v-if="images && images.length > 0"
+        ref="track"
         :style="{ left: trackLeft + 'px' }"
         class="carousel-track">
         <!-- Carousel slides -->
         <div v-for="(image, index) in images"
           :key="`carousel-slide_${index}`"
+          :ref="`slide_${index}`"
           :style="{ 'margin-right': gap + 'px', cursor: slideCursor }"
           :id="`carousel-slide_${index}`"
           class="carousel-slide">
@@ -29,9 +32,10 @@
       </div>
       <!-- Carousel left arrow -->
       <div v-if="arrows && images && images.length > 0"
+        ref="arrowLeft"
         :style="{ left: arrowsGap.left }"
         class="carousel-arrow carousel-arrow--left"
-        @click="goTo('right')">
+        @click="goTo('left')">
         <component v-if="arrowIcon"
           :is="arrowIcon"
           :style="{ 'background-color': arrowsColors['background-color'], transform: `rotate(${arrowsRotation.leftArrow})` }"
@@ -53,9 +57,10 @@
       </div>
       <!-- Carousel right arrow -->
       <div v-if="arrows && images && images.length > 0"
+        ref="arrowRight"
         :style="{ right: arrowsGap.right }"
         class="carousel-arrow carousel-arrow--right"
-        @click="goTo('left')">
+        @click="goTo('right')">
         <component v-if="arrowIcon"
           :is="arrowIcon"
           :style="{ 'background-color': arrowsColors['background-color'], transform: `rotate(${arrowsRotation.rightArrow})` }"
@@ -82,6 +87,7 @@
       class="carousel-dots">
       <span v-for="(image, index) in images"
         :key="`carousel-dot_${index}`"
+        :ref="`dot_${index}`"
         :id="`carousel-dot_${index}`"
         :style="{
           width: dotsDimension.width,
@@ -238,24 +244,24 @@ export default {
     },
     // calculations needed often, so they are provided by this method that returns an object
     offsetCalculations () {
-      const vm = this
-      const wrapperViewport = document.getElementsByClassName('carousel-wrapper')[0]
+      const wrapperViewport = this.$refs.wrapper
       const wrapperViewportOffset = wrapperViewport.getBoundingClientRect()
+      const vm = this
 
       return {
         wrapperViewportWidth: Math.round(wrapperViewport.offsetWidth),
         wrapperViewportOffsetLeft: Math.round(wrapperViewportOffset.left),
         wrapperViewportOffsetRight: Math.round(wrapperViewportOffset.right),
-        firstSlideOffsetLeft: Math.round(document.getElementById('carousel-slide_0').getBoundingClientRect().left),
-        lastSlideOffsetRight: Math.round(document.getElementById(`carousel-slide_${vm.images.length - 1}`).getBoundingClientRect().right)
+        firstSlideOffsetLeft: Math.round(vm.$refs.slide_0[0].getBoundingClientRect().left),
+        lastSlideOffsetRight: Math.round(vm.$refs[`slide_${vm.images.length - 1}`][0].getBoundingClientRect().right)
       }
     },
     mouseEnterWrapper () {
       const contentWidth = window.innerWidth
 
       if (contentWidth > 767 && this.arrows && this.images && this.images.length > 0) {
-        const leftArrow = document.getElementsByClassName('carousel-arrow--left')[0]
-        const rightArrow = document.getElementsByClassName('carousel-arrow--right')[0]
+        const leftArrow = this.$refs.arrowLeft
+        const rightArrow = this.$refs.arrowRight
         leftArrow.classList.add('active')
         rightArrow.classList.add('active')
       }
@@ -264,8 +270,8 @@ export default {
       const contentWidth = window.innerWidth
 
       if (contentWidth > 767 && this.arrows && this.images && this.images.length > 0) {
-        const leftArrow = document.getElementsByClassName('carousel-arrow--left')[0]
-        const rightArrow = document.getElementsByClassName('carousel-arrow--right')[0]
+        const leftArrow = this.$refs.arrowLeft
+        const rightArrow = this.$refs.arrowRight
         leftArrow.classList.remove('active')
         rightArrow.classList.remove('active')
       }
@@ -287,32 +293,11 @@ export default {
         this.$emit('beforeSlideMove')
         const calc = this.offsetCalculations()
 
-        if (event === 'left') {
-          // case for left arrow & left keyCode
-          // when going on left we are interested in width od first slide 'in-view'
-          const currentSlideWidth = Math.round(document.getElementsByClassName('carousel-slide in-view')[0].offsetWidth)
-          const leftArrow = document.getElementsByClassName('carousel-arrow--left')[0]
-          // on left keyCode short time left arrow display for better UX
-          if (window.getComputedStyle(leftArrow).visibility === 'hidden') {
-            leftArrow.classList.add('active')
-            setTimeout(() => {
-              leftArrow.classList.remove('active')
-            }, 275)
-          }
-          // slider move to left (two diff cases here)
-          if (calc.wrapperViewportOffsetRight <= calc.lastSlideOffsetRight) {
-            this.trackLeft = this.trackLeft - currentSlideWidth - this.gap
-          } else this.trackLeft = 0
-          /////////////////////////////////////
-        } else if (event === 'right') {
+        if (event === 'right') {
           // case for right arrow & right keyCode
-          // when going on right we are interested in width od first slide before one that is 'in-view'
-          let beforeCurrentSlideWidth
-          if (document.getElementsByClassName('carousel-slide in-view')[0].id === 'carousel-slide_0') {
-            const i = this.images.length - 1
-            beforeCurrentSlideWidth = document.getElementById(`carousel-slide_${i}`).offsetWidth
-          } else beforeCurrentSlideWidth = Math.round(document.getElementsByClassName('carousel-slide in-view')[0].previousSibling.offsetWidth)
-          const rightArrow = document.getElementsByClassName('carousel-arrow--right')[0]
+          // when going on right we are interested in width od first slide 'in-view'
+          const currentSlideWidth = Math.round(document.getElementsByClassName('carousel-slide in-view')[0].offsetWidth)
+          const rightArrow = this.$refs.arrowRight
           // on right keyCode short time right arrow display for better UX
           if (window.getComputedStyle(rightArrow).visibility === 'hidden') {
             rightArrow.classList.add('active')
@@ -321,13 +306,34 @@ export default {
             }, 275)
           }
           // slider move to right (two diff cases here)
+          if (calc.wrapperViewportOffsetRight <= calc.lastSlideOffsetRight) {
+            this.trackLeft = this.trackLeft - currentSlideWidth - this.gap
+          } else this.trackLeft = 0
+          /////////////////////////////////////
+        } else if (event === 'left') {
+          // case for left arrow & left keyCode
+          // when going on left we are interested in width od first slide before one that is 'in-view'
+          let beforeCurrentSlideWidth
+          if (document.getElementsByClassName('carousel-slide in-view')[0].id === 'carousel-slide_0') {
+            const i = this.images.length - 1
+            beforeCurrentSlideWidth = this.$refs[`slide_${i}`][0].offsetWidth
+          } else beforeCurrentSlideWidth = Math.round(document.getElementsByClassName('carousel-slide in-view')[0].previousSibling.offsetWidth)
+          const leftArrow = this.$refs.arrowLeft
+          // on left keyCode short time left arrow display for better UX
+          if (window.getComputedStyle(leftArrow).visibility === 'hidden') {
+            leftArrow.classList.add('active')
+            setTimeout(() => {
+              leftArrow.classList.remove('active')
+            }, 275)
+          }
+          // slider move to left (two diff cases here)
           if (calc.wrapperViewportOffsetLeft > calc.firstSlideOffsetLeft) {
             this.trackLeft = this.trackLeft + beforeCurrentSlideWidth + this.gap
           } else {
             // this case is a bit complex as it's not goal to jump blindly on last slide
             // but to potentially show slide/s before last one if it's possible (depending on a viewport)
             const imagesLength = this.images.length
-            const lastSlide = document.getElementById(`carousel-slide_${imagesLength - 1}`)
+            const lastSlide = this.$refs[`slide_${imagesLength - 1}`][0]
             const lastSlideWidth = Math.round(lastSlide.offsetWidth)
             const lastSlideOffsetLeft = Math.round(lastSlide.getBoundingClientRect().left)
 
@@ -336,7 +342,7 @@ export default {
             } else {
               let slidesToDisplayWidth = lastSlideWidth + this.gap
               for (let j = imagesLength - 2; j >= 0; j--) {
-                const prevSlide = document.getElementById(`carousel-slide_${j}`)
+                const prevSlide = this.$refs[`slide_${j}`][0]
                 const prevSlideWidth = Math.round(prevSlide.offsetWidth)
                 const prevSlideOffsetLeft = Math.round(prevSlide.getBoundingClientRect().left)
                 slidesToDisplayWidth = slidesToDisplayWidth + prevSlideWidth + this.gap
@@ -357,7 +363,7 @@ export default {
           } else {
             // this case is a bit complex as it's not goal to jump blindly on any slide
             // but to also show slide/s before or after that one if it's possible (depending on a viewport)
-            const slide = document.getElementById(`carousel-slide_${i}`)
+            const slide = this.$refs[`slide_${i}`][0]
             const slideWidth = Math.round(slide.offsetWidth)
             const slideOffsetLeft = Math.round(slide.getBoundingClientRect().left)
 
@@ -366,7 +372,7 @@ export default {
             } else {
               let slidesToDisplayWidth = slideWidth + this.gap
               for (let j = i + 1; j < this.images.length; j++) {
-                const nextSlideWidth = Math.round(document.getElementById(`carousel-slide_${j}`).offsetWidth)
+                const nextSlideWidth = Math.round(this.$refs[`slide_${j}`][0].offsetWidth)
                 slidesToDisplayWidth = slidesToDisplayWidth + nextSlideWidth + this.gap
                 if (slidesToDisplayWidth >= calc.wrapperViewportWidth) break
               }
@@ -374,7 +380,7 @@ export default {
                 this.trackLeft = this.trackLeft + calc.wrapperViewportOffsetLeft - slideOffsetLeft
               } else {
                 for (let j = i - 1; j >= 0; j--) {
-                  const prevSlide = document.getElementById(`carousel-slide_${j}`)
+                  const prevSlide = this.$refs[`slide_${j}`][0]
                   const prevSlideWidth = Math.round(prevSlide.offsetWidth)
                   const prevSlideOffsetLeft = Math.round(prevSlide.getBoundingClientRect().left)
                   slidesToDisplayWidth = slidesToDisplayWidth + prevSlideWidth + this.gap
@@ -399,14 +405,14 @@ export default {
     },
     slidesPositionCheck () {
       const calc = this.offsetCalculations()
-      const carouselTrack = document.getElementsByClassName('carousel-track')[0]
+      const carouselTrack = this.$refs.track
       // loop through slides for their offsets and needed checks
       for (let i = 0; i < carouselTrack.children.length; i++) {
         let slide = carouselTrack.children[i]
         let slideWidth = carouselTrack.children[i].offsetWidth
         let slideLeft = Math.round(slide.getBoundingClientRect().left)
         let slideRight = Math.round(slide.getBoundingClientRect().right)
-        let slideDot = document.getElementById(`carousel-dot_${i}`)
+        let slideDot = this.$refs[`dot_${i}`][0]
 
         // had to make small hack (+ 5px) because js doesn't calculate precisely
         // guess the reason is width relative to fixed height
@@ -455,9 +461,11 @@ export default {
       if (this.images && this.images.length > 0) {
         e = e || window.event
         switch (e.which || e.keyCode) {
-          case 37: this.goTo('right')
+          // keyboard left arrow
+          case 37: this.goTo('left')
             break
-          case 39: this.goTo('left')
+          // keyboard right arrow
+          case 39: this.goTo('right')
             break
           default: return
         }
