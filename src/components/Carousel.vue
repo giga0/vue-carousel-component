@@ -454,12 +454,14 @@ export default {
           }
         }
       }
-    }
-  },
-  mounted () {
-    document.onkeydown = (e) => {
+    },
+    keyboardArrowsBehavior (e) {
       if (this.images && this.images.length > 0) {
         e = e || window.event
+        // in case that cursor is active inside input or textarea field -> return
+        if (e.target.localName === 'input' || e.target.localName === 'textarea') {
+          return
+        }
         switch (e.which || e.keyCode) {
           // keyboard left arrow
           case 37: this.goTo('left')
@@ -472,6 +474,12 @@ export default {
         e.preventDefault()
       }
     }
+  },
+  mounted () {
+    document.addEventListener('keydown', this.keyboardArrowsBehavior)
+  },
+  destroyed () {
+    document.removeEventListener('keydown', this.keyboardArrowsBehavior)
   }
 }
 </script>
